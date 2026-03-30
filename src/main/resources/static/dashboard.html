@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Dashboard</title>
+<meta charset="UTF-8">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+background:linear-gradient(120deg,#38bdf8,#7c3aed);
+text-align:center;
+color:white;
+font-family:Arial;
+}
+canvas{
+background:white;
+border-radius:10px;
+padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Dashboard</h2>
+
+<canvas id="chart"></canvas>
+
+<script>
+fetch("/applications/all")
+.then(res=>res.json())
+.then(data=>{
+
+let a=0,p=0,r=0;
+
+data.forEach(x=>{
+if(x.status==="APPROVED")a++;
+else if(x.status==="PENDING")p++;
+else r++;
+});
+
+new Chart(chart,{
+type:"pie",
+data:{
+labels:["Approved","Pending","Rejected"],
+datasets:[{data:[a,p,r]}]
+}
+});
+});
+</script>
+
+</body>
+</html>

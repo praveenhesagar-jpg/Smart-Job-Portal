@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<meta charset="UTF-8">
+
+<style>
+body {
+    margin:0;
+    font-family: Arial;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(120deg,#38bdf8,#7c3aed);
+}
+
+.box {
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    width:300px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+input {
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+button {
+    width:100%;
+    padding:10px;
+    border:none;
+    background:#22c55e;
+    color:white;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+button:hover {
+    background:#16a34a;
+}
+
+a { 
+    display:block; 
+    margin-top:10px; 
+    color:#555;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+    <h2>Login</h2>
+
+    <input id="email" type="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+
+    <a href="register.html">Create Account</a>
+</div>
+
+<script>
+function login() {
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    // 🔴 basic validation
+    if (!email || !password) {
+        alert("Enter email and password");
+        return;
+    }
+
+    fetch("http://localhost:8080/auth/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            email: email,
+            password: password
+        })
+    })
+    .then(res => res.text())
+    .then(data => {
+
+        console.log("Response:", data);
+
+        if (data === "Invalid") {
+            alert("Invalid Login ❌");
+        } else {
+
+            // ✅ SAVE DATA
+            localStorage.setItem("email", email);
+            localStorage.setItem("token", data);
+
+            // ✅ ROLE SYSTEM
+            if (email === "admin@gmail.com") {
+                localStorage.setItem("role", "ADMIN");
+            } else {
+                localStorage.setItem("role", "USER");
+            }
+
+            alert("Login Successful ✅");
+
+            // ✅ REDIRECT
+            window.location.href = "index.html";
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Server Error ❌");
+    });
+}
+</script>
+
+</body>
+</html>

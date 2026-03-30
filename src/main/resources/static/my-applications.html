@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>My Applications</title>
+<meta charset="UTF-8">
+
+<style>
+body {
+    font-family: Arial;
+    background: linear-gradient(135deg,#00c6ff,#7b2ff7);
+}
+
+.container {
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 15px;
+    margin: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>My Applications</h2>
+    <div id="apps"></div>
+</div>
+
+<script>
+
+// ✅ get email from login
+const email = localStorage.getItem("email");
+
+console.log("Email:", email); // debug
+
+fetch(`http://localhost:8080/applications/my?email=${email}`)
+.then(res => res.json())
+.then(data => {
+
+    console.log("DATA:", data);
+
+    let div = document.getElementById("apps");
+    div.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        div.innerHTML = "<h3>No Applications Found</h3>";
+        return;
+    }
+
+    data.forEach(app => {
+        div.innerHTML += `
+        <div class="card">
+            <h3>${app.job?.title || "No Title"}</h3>
+            <p>${app.job?.company || "-"}</p>
+            <p>Status: <b>${app.status}</b></p>
+        </div>
+        `;
+    });
+
+})
+.catch(err => console.error(err));
+
+</script>
+
+</body>
+</html>

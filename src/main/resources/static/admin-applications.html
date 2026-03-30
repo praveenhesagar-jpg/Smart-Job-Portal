@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin</title>
+<meta charset="UTF-8">
+
+<style>
+body{font-family:Arial;background:#eef2f7;}
+.card{background:white;padding:15px;margin:10px;border-radius:10px;}
+button{margin:5px;}
+</style>
+</head>
+
+<body>
+
+<h2 style="padding:10px;">Admin Panel</h2>
+
+<div id="data"></div>
+
+<script>
+
+fetch("/applications/all")
+.then(res=>res.json())
+.then(data=>{
+let html="";
+
+data.forEach(a=>{
+html+=`
+<div class="card">
+<h4>${a.job.title}</h4>
+<p>${a.job.company}</p>
+<p>${a.applicantEmail}</p>
+<p>Status: ${a.status}</p>
+
+<button onclick="download(${a.id})">Download Resume</button>
+
+${a.status==="PENDING"?`
+<button onclick="update(${a.id},'APPROVED')">Approve</button>
+<button onclick="update(${a.id},'REJECTED')">Reject</button>
+`:`<b>Done</b>`}
+
+</div>`;
+});
+
+document.getElementById("data").innerHTML=html;
+});
+
+function update(id,status){
+fetch(`/applications/status/${id}?status=${status}`,{method:"PUT"})
+.then(()=>location.reload());
+}
+
+function download(id){
+window.open(`/applications/resume/${id}`);
+}
+
+if(localStorage.getItem("role") === "ADMIN"){
+    jobsDiv.innerHTML += `
+    <button onclick="deleteJob(${job.id})">Delete</button>
+    `;
+}
+function openAddJob() {
+
+    let title = prompt("Enter Title");
+    let company = prompt("Enter Company");
+    let location = prompt("Enter Location");
+    let salary = prompt("Enter Salary");
+
+    fetch("/jobs/add", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            title,
+            company,
+            location,
+            salary
+        })
+    })
+    .then(() => {
+        alert("Job Added");
+        loadJobs();
+    });
+}
+
+</script>
+
+</body>
+</html>
